@@ -6,6 +6,7 @@ class Crawler():
     def __init__(self, driver_path):
         chromedriver = driver_path
         options = webdriver.ChromeOptions()
+        options.add_experimental_option('excludeSwitches', ['enable-automation'])
         options.add_argument('headless')
         self.driver = webdriver.Chrome(chromedriver, chrome_options=options)
 
