@@ -28,24 +28,24 @@ class Crawler():
         )
         return attributes
 
-    def get_shadow_root(self, by, value, driver=None):
-        root = self.get_element(by, value, driver)
+    def get_shadow_root(self, by, value, element=None):
+        root = self.get_element(by, value, element)
         shadow_root = self.expand_shadow_element(root)
         return shadow_root
 
-    def get_all_elements(self, by, value, driver=None):
-        if driver is None:
-            driver = self.driver
-        return WebDriverWait(driver, 10).until(
+    def get_all_elements(self, by, value, element=None):
+        if element is None:
+            element = self.driver
+        return WebDriverWait(element, 10).until(
             EC.presence_of_all_elements_located(
                 (by, value)
             )
         )
 
-    def get_element(self, by, value, driver=None):
-        if driver is None:
-            driver = self.driver
-        return WebDriverWait(driver, 10).until(
+    def get_element(self, by, value, element=None):
+        if element is None:
+            element = self.driver
+        return WebDriverWait(element, 10).until(
             EC.presence_of_element_located(
                 (by, value)
             )
