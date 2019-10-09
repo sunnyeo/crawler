@@ -47,8 +47,11 @@ class GCJCrawler(Crawler):
                     if i == 0:
                         author_info['rank_%d' %round_cnt] = info.text.replace('\n ', '')
                     elif i == 1:
-                        country = self.get_element(By.TAG_NAME, 'img', element=info)
-                        country = country.get_attribute('title')
+                        try:
+                            country = self.get_element(By.TAG_NAME, 'img', element=info)
+                            country = country.get_attribute('title')
+                        except:
+                            country = ''
                         author_info['country'] = country.replace(' ', '_')
 
                     elif i == 2:
@@ -250,12 +253,18 @@ class GCJCrawler(Crawler):
                         total_author_info[key] = author_info
 
             with open('gcj_result_%d.csv' %year, 'w') as csvfile:
-                fieldnames = total_author_info.keys()
+                fieldnames = ['name', 'country']
+                for cnt in range(1, round_count+1):
+                    fieldnames += ['rank_%d' %cnt]
+                    fieldnames += ['score_%d' %cnt]
+                for cnt in range(prob_cnt):
+                    fieldnames += ['prob_%d' %cnt]
+
                 writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
                 writer.writeheader()
 
-                for author_info in total_author_info:
-                    writer.writerow(author_info)
+                for author in total_author_info.keys():
+                    writer.writerow(total_author_info[author])
 
 c = GCJCrawler()
 c.run()
