@@ -18,14 +18,18 @@ class Crawler():
 
         if self.headless:
             options.headless = True
-        else:
-            options.add_experimental_option('prefs',
-                {'download.default_directory': self.download_path,
+            options.add_argument('--disable-gpu')
+            options.add_argument('--no-sandbox')
+
+        options.add_experimental_option(
+            'prefs', {
+                'download.default_directory': self.download_path,
                 'download.prompt_for_download': False,
                 'download.directory_upgrade': True,
                 'safebrowsing.enabled': False,
-                'safebrowsing.disable_download_protection': True}
-            )
+                'safebrowsing.disable_download_protection': True
+            }
+        )
 
         self.driver = webdriver.Chrome(chromedriver, chrome_options=options)
 
