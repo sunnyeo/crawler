@@ -2,6 +2,7 @@
 
 from crawler.crawler import Crawler
 
+import sys
 import os
 import csv
 import time
@@ -97,7 +98,10 @@ class GCJCrawler(Crawler):
                 print (author_info)
                 author_info_list.append(author_info)
 
-            next_page = self.get_all_elements(By.CSS_SELECTOR, '#scb-range-links > a')[-1]
+            try:
+                next_page = self.get_all_elements(By.CSS_SELECTOR, '#scb-range-links > a')[-1]
+            except:
+                break
             if 'Next' in next_page.text:
                 next_page.click()
                 board_url = self.driver.current_url
@@ -218,13 +222,20 @@ class GCJCrawler(Crawler):
         return author_info_list, prob_cnt+total_prob
 
     def run(self):
-        for year in range(2008, 2020):
+        start = 2008
+        end = 2020
+        if len(sys.argv) == 2:
+            start = int(sys.argv[1])
+            end = start + 1
+        print (start, end)
+        for year in range(start, end):
             year_url = 'https://codingcompetitions.withgoogle.com/' + \
                         'codejam/archive/%d' %year
             self.driver.get(year_url)
             print (year_url)
 
-            self.code_path = '/data/crawler/downloads/GCJ/%d' %year
+            self.code_path = os.path.dirname(os.path.abspath(__file__))
+            self.code_path += '/downloads/GCJ/%d' %year
             if not os.path.exists(self.code_path):
                 os.makedirs(self.code_path)
         
@@ -247,7 +258,7 @@ class GCJCrawler(Crawler):
                 
                 for author_info in author_info_list:
                     key = '%s.%s' %(author_info['name'], author_info['country'])
-                    if key in author_info:
+                    if key in total_author_info.keys():
                         total_author_info[key].update(author_info)
                     else:
                         total_author_info[key] = author_info
